@@ -6,11 +6,11 @@ PlayerSettings:
   serializedVersion: 10
   productGUID: 6487110fd17abce4ba99a3c71c3d9d29
   AndroidProfiler: 0
-  defaultScreenOrientation: 4
+  defaultScreenOrientation: 3
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: Feast Inc.
   productName: RealGame
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -118,7 +118,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleIdentifier: com.Company.ProductName
+  bundleIdentifier: com.FeastInc.RealGame
   bundleVersion: 1.0
   preloadedAssets: []
   metroInputSource: 0
@@ -126,7 +126,7 @@ PlayerSettings:
   xboxOneDisableKinectGpuReservation: 0
   protectGraphicsMemory: 0
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 9
+  AndroidMinSdkVersion: 14
   AndroidPreferredInstallLocation: 1
   aotOptions: 
   apiCompatibilityLevel: 2
@@ -197,8 +197,8 @@ PlayerSettings:
   AndroidTargetDevice: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: 
-  AndroidKeyaliasName: 
+  AndroidKeystoreName: "D:/\u041F\u0440\u043E\u0435\u043A\u0442\u044B/RealGame/project/RealGame/user.keystore"
+  AndroidKeyaliasName: feast
   AndroidTVCompatibility: 1
   AndroidIsGame: 1
   androidEnableBanner: 1
