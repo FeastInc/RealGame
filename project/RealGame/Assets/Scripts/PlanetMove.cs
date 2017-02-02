@@ -108,9 +108,13 @@ public class PlanetMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Math.Cos(angle) == 0 || Math.Sin(angle) == 0)
+            angle += Math.PI / 180;
+
         var nextPoint = new Vector2((float)(radiusRotation * Math.Cos(angle)), 
             (float)(radiusRotation * Math.Sin(angle)));
         //считаю следующую точку с помощью параметрического уравнения, где параметр - это угол
+
         transform.position = Vector2.MoveTowards(position, nextPoint, Speed * Time.deltaTime);
         angle += Speed * Math.PI / 180; // увеличеваю угол, что-то вроде угловой скорости
         position = transform.position;
