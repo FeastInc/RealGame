@@ -109,9 +109,9 @@ public class PlanetMove : MonoBehaviour
     void Update()
     {
         var nextPoint = new Vector2((float)(radiusRotation * Math.Cos(angle)), 
-            (float)(radiusRotation * Math.Sin(angle))); 
+            (float)(radiusRotation * Math.Sin(angle)));
         //считаю следующую точку с помощью параметрического уравнения, где параметр - это угол
-        transform.position = nextPoint;
+        transform.position = Vector2.MoveTowards(position, nextPoint, Speed * Time.deltaTime);
         angle += Speed * Math.PI / 180; // увеличеваю угол, что-то вроде угловой скорости
         position = transform.position;
     }
