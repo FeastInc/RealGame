@@ -197,7 +197,7 @@ PlayerSettings:
   AndroidTargetDevice: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: "D:/\u041F\u0440\u043E\u0435\u043A\u0442\u044B/RealGame/project/RealGame/user.keystore"
+  AndroidKeystoreName: D:/GitHub/RealGame/project/RealGame/user.keystore
   AndroidKeyaliasName: feast
   AndroidTVCompatibility: 1
   AndroidIsGame: 1
