@@ -4,15 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Moves : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Moves : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject Player;
+    //[SerializeField]
+    //private GameObject Player;
+    Vector2 delta;
+    Vector2 start = new Vector2(5f, 0);
     
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.touchCount > 0)
+        {
+            CreateRay();
+        }
+        else
+        {
+            DestroyRay();
+        }
 
     }
     public int lengthOfLineRenderer = 2;
@@ -24,26 +33,21 @@ public class Moves : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHan
         lineRenderer.SetColors(Color.blue, Color.blue);
         lineRenderer.SetWidth(0.1F, 0.1F);
         lineRenderer.SetVertexCount(lengthOfLineRenderer);
+    
+        delta = new Vector2((float)Screen.width / 2, (float)Screen.height / 2);
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+    void CreateRay()
     {
+        var data = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+
+        Debug.Log(data);
         LineRenderer lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.SetPosition(0, Player.transform.position);
-        lineRenderer.SetPosition(0, eventData.position);
+        lineRenderer.SetPosition(0, start);
+        lineRenderer.SetPosition(1, data);
     }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        Debug.Log(Player.transform.position);
-        Debug.Log(Player.transform.localPosition);
-        Debug.Log(eventData.position);
-        LineRenderer lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.SetPosition(0, Player.transform.localPosition);
-        lineRenderer.SetPosition(1, eventData.position);
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
+    void DestroyRay()
     {
         LineRenderer lineRenderer = GetComponent<LineRenderer>();
         Vector3[] points = new Vector3[lengthOfLineRenderer];
