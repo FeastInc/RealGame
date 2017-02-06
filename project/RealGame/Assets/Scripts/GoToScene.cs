@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class GoToScene : MonoBehaviour, IPointerDownHandler
+public class GoToScene : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     [SerializeField]
     private string Scene;
@@ -19,8 +19,7 @@ public class GoToScene : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        SceneManager.LoadScene(Scene);
-        Debug.Log("Button 'Back'");
+        
     }
 
     // Update is called once per frame
@@ -29,4 +28,8 @@ public class GoToScene : MonoBehaviour, IPointerDownHandler
 
     }
 
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        SceneManager.LoadScene(Scene);
+    }
 }
