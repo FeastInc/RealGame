@@ -1,8 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/MainMenu.unity
-=======
-- path: Assets/Scenes/D_TestScene.unity
->>>>>>> fa63b030c47a957469c6380d1825334322fb25f3
+- path: Assets/Scenes/CharacterWalk.unity
   isLoaded: 1
   isActive: 1
