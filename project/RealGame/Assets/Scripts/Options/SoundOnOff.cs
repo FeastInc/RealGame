@@ -4,30 +4,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SoundOnOff : MonoBehaviour, IPointerDownHandler {
-	// Use this for initialization
-	void Start () {
-	}
+public class SoundOnOff : MonoBehaviour, IPointerUpHandler, IPointerClickHandler
+{
+    [SerializeField]
+    private Sprite SoundOn;
+    [SerializeField]
+    private Sprite SoundOff;
+    [SerializeField]
+    private AudioSource audio;
 
-    public void OnPointerDown(PointerEventData eventData)
+	void Start ()
     {
-        var audio = GetComponentInChildren<AudioSource>();
-        var a = GetComponentsInChildren<TextMesh>();
-        if (a[1].text == "Off")
+        //audio = Camera.main.GetComponent<AudioListener>();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        var spriteName = GetComponent<SpriteRenderer>().sprite.name;
+
+        if (spriteName == "SoundOn")
         {
-            a[1].text = "On";
-            audio.Play();
+            GetComponent<SpriteRenderer>().sprite = SoundOff;
+            audio.volume = 0;
         }
         else
         {
-            a[1].text = "Off";
-            audio.Stop();
+            GetComponent<SpriteRenderer>().sprite = SoundOn;
+            audio.volume = 0.5f;
         }
     }
-
-	// Update is called once per frame
-	void Update () {
-		
-	}
-    
 }
