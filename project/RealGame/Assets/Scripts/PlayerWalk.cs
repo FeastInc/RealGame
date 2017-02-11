@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PlayerWalk : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class PlayerWalk : MonoBehaviour
 {
     public float Speed;
     private SpriteRenderer sprite;
     private Animator animator;
-    [SerializeField]
     private GameObject Player;
     public bool rightDirection;
-    private bool isRun;
+    public bool isRun;
     private float directionValue = 10f;
 
     private PlayerState State
@@ -22,48 +21,27 @@ public class PlayerWalk : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
 
     void Start ()
-    {
+    {        
+        if (PlayerPrefs.GetInt("IsFirstRun") == 0)
+        {
+            PlayerPrefs.SetInt("IsFirstRun", 1);
+            PlayerPrefs.SetString("Player", "Player");
+        }
+
+        Player = Instantiate(Resources.Load("Prefabs/Players/" + PlayerPrefs.GetString("Player"))) as GameObject;
         sprite = Player.GetComponent<SpriteRenderer>();
         animator = Player.GetComponent<Animator>();
-	}
+    }
 	
 	void Update ()
-    {       
+    {
         State = PlayerState.Idle;
 
         if (isRun) Walk();
     }
 
-    //void Walk()
-    //{       
-    //    Vector3 direction = new Vector3(Input.GetTouch(0).position.x, 0, 0);
-
-    //    if (Input.GetTouch(0).position.x > Screen.width / 2)
-    //    {
-    //        Player.transform.position = Vector2.MoveTowards(transform.position, transform.position + direction, Speed * Time.deltaTime);
-    //        sprite.flipX = false;
-    //    }
-    //    else
-    //    {
-    //        Player.transform.position = Vector2.MoveTowards(transform.position, transform.position - direction, Speed * Time.deltaTime);
-    //        sprite.flipX = true;
-    //    }
-
-    //    State = PlayerState.Walk;
-    //}
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        isRun = true;       
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        isRun = false;
-    }
-
     void Walk()
-    {     
+    {
         Vector3 direction = new Vector3(directionValue, 0, 0);
 
         if (rightDirection)

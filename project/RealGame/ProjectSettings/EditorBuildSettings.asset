@@ -9,3 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
   - enabled: 1
     path: Assets/Scenes/CharacterWalk.unity
+  - enabled: 1
+    path: Assets/Scenes/D_TestScene.unity
+  - enabled: 1
+    path: Assets/Scenes/Shop.unity
