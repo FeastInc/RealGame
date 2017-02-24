@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,89 +9,129 @@ public class Moves : MonoBehaviour
 {
     //[SerializeField]
     //private GameObject Player;
-    [SerializeField]
-    GameObject blast;
-    bool fire = false;
-    Vector2 delta;
-    Vector2 start = new Vector2(-1f, 2f);
-    Vector2 lastDirection;
-    
+    [SerializeField] GameObject Bullet;
+    [SerializeField] GameObject SpawnPoint;
+    [SerializeField] float Speed;
+    [SerializeField] GameObject Laser;
+    bool CanFire = false;
+    Vector3[] Trajectory;
+
     // Update is called once per frame
     void Update()
     {
+        Bullet.transform.position = Vector2.MoveTowards(Bullet.transform.position,
+            (Vector2)Bullet.transform.position + Vector2.right, Speed * Time.deltaTime);
         if (Input.touchCount > 0)
         {
-            CreateRay();
+            Aim();
         }
         else
         {
-            DestroyRay();
-            if (fire) Fire();
+            RemoveAim();
+            if (CanFire) Fire();
         }
 
     }
     void Start()
     {
-        LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.sortingOrder = 1;
+        LineRenderer lineRenderer = Laser.GetComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
-        lineRenderer.SetColors(Color.blue, Color.blue);
-        lineRenderer.SetWidth(0.1F, 0.1F);
-    
-        delta = new Vector2((float)Screen.width / 2, (float)Screen.height / 2);
+        lineRenderer.startWidth = lineRenderer.endWidth = 0.1f;
+        lineRenderer.sortingOrder = 1;
     }
 
-    void CreateRay()
+    Vector3[] GetTrajectory(Vector3 start, Vector3 direction)
     {
-        var data = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-        LineRenderer lineRenderer = GetComponent<LineRenderer>();
-        Ray2D ray = new Ray2D(start, (Vector2)data - start);
-        //Debug.DrawRay(start, (Vector2)data - start, Color.red);
-        var hit = Physics2D.Raycast(ray.origin, ray.direction, 1000);
-        //if (hit.collider != null)
-        //{
-        //    Debug.DrawRay(hit.point, hit.normal, Color.green);
-        //    Debug.DrawRay(hit.point, Vector2.Reflect(ray.direction, hit.normal), Color.cyan);
-        //}
-        if (hit.collider != null)
+        List<Vector3> points = new List<Vector3>();
+        Ray2D ray = new Ray2D(start, direction);
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, 1000);
+        bool flag = hit.collider != null;
+
+        points.Add(start);
+        var i = 0;
+        while (flag && i++ < 300)
         {
-            lineRenderer.SetVertexCount(3);
-            lineRenderer.SetPosition(0, start);
-            lineRenderer.SetPosition(1, hit.point);
-            lineRenderer.SetPosition(2, Vector2.Reflect(ray.direction, hit.normal) + hit.point);
+            ray = new Ray2D(hit.point, Vector2.Reflect(ray.direction, hit.normal));
+            hit = Physics2D.Raycast(ray.origin, ray.direction, 1000);
+            flag = hit.collider != null;
+            points.Add(ray.origin);
         }
-        else
-        {
-            lineRenderer.SetVertexCount(2);
-            lineRenderer.SetPosition(0, start);
-            lineRenderer.SetPosition(1, data);
-        }
-        fire = true;
-        lastDirection = ray.direction;
+        points.Add(ray.direction + ray.origin);
+
+        return points.ToArray();
     }
 
-    void DestroyRay()
+    void Aim()
     {
-        LineRenderer lineRenderer = GetComponent<LineRenderer>();
-        Vector3[] points = new Vector3[lineRenderer.numPositions];
-        for (int i = 0; i < lineRenderer.numPositions; i++)
-        {
-            points[i] = new Vector3(0, 0, 0);
-        }
+        Vector2 data = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+        LineRenderer lineRenderer = Laser.GetComponent<LineRenderer>();
+        Vector2 start = SpawnPoint.transform.position;
+        CanFire = true;
+        Trajectory = GetTrajectory(start, data - start);
+
+        int numPos = (Trajectory.Length >= 3) ? 3 : 2;
+        lineRenderer.numPositions = numPos;
+        Vector3[] points = new Vector3[numPos];
+        Array.Copy(Trajectory, points, numPos);
         lineRenderer.SetPositions(points);
+
+
+    }
+
+    void RemoveAim()
+    {
+        LineRenderer lineRenderer = Laser.GetComponent<LineRenderer>();
+        lineRenderer.numPositions = 0;
     }
 
     void Fire()
     {
-        var transform = blast.transform;
-        float angle;
-        if (lastDirection.y < 0)
-            angle = -Vector2.Angle(Vector2.right, lastDirection);
-        else
-            angle = Vector2.Angle(Vector2.right, lastDirection);
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        blast.transform.position = blast.transform.position + blast.transform.forward * 2;
-        Debug.Log(transform.forward);
-        fire = false;
+        GenerateBullet();
+        CanFire = false;
+    }
+
+    void GenerateBullet()
+    {
+        Vector2 bulletPosition = SpawnPoint.transform.position;
+        GameObject createdBullet = Instantiate(Bullet, bulletPosition, transform.rotation) as GameObject;
+        var coroutine = StartCoroutine(MoveObjectAlongTrajectiory(createdBullet, Trajectory));
+        //StartCoroutine(DissipateBullet(createdBullet, coroutine));
+
+    }
+
+    IEnumerator DissipateBullet(GameObject bullet, Coroutine coroutine)
+    {
+        yield return new WaitForSeconds(1f);
+        //StopCoroutine(coroutine);
+        Destroy(bullet);
+
+    }
+
+    IEnumerator MoveObjectAlongTrajectiory(GameObject obj, Vector3[] trajectory)
+    {
+        int i = 1;
+        while (i < trajectory.Length)
+        {
+            //bullet.transform.position = Vector2.MoveTowards(
+            //    trajectory[i - 1], trajectory[i], Speed*Time.deltaTime);
+            yield return StartCoroutine(MoveObjectToPoint(obj, trajectory[i]));
+            i++;
+        }
+        Vector2 direction = trajectory[trajectory.Length - 1] - trajectory[trajectory.Length - 2];
+        StartCoroutine(MoveObjectToPoint(obj, direction + (Vector2)obj.transform.position, true));
+
+    }
+
+    IEnumerator MoveObjectToPoint(GameObject obj, Vector2 point, bool infinity = false)
+    {
+        var direction = (infinity) ? point - (Vector2)obj.transform.position: new Vector2(0, 0);
+        while ((Vector2)obj.transform.position != point || infinity)
+        {
+            var p = (infinity) ? (Vector2)obj.transform.position : point;
+            obj.transform.position = Vector2.MoveTowards(
+                obj.transform.position, p + direction, Speed*Time.deltaTime
+                );
+            yield return null;
+        }
     }
 }
