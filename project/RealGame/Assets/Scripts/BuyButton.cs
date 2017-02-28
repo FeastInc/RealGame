@@ -14,16 +14,14 @@ public class BuyButton : MonoBehaviour, IPointerClickHandler, IPointerUpHandler
     {
         var spriteName = GetComponent<SpriteRenderer>().name;
 
-        Debug.Log(spriteName);
-
         if (spriteName == "Current")
         {
-
+            
         }
         else if (spriteName == "Bought")
         {
-            PlayerPrefs.SetString("Player", gameObject.name);
-            UpdateButtons();
+            PlayerPrefs.SetString("Player", parent.name);
+            //UpdateButtons();
         }
         else
         {            
@@ -45,7 +43,7 @@ public class BuyButton : MonoBehaviour, IPointerClickHandler, IPointerUpHandler
                 PlayerPrefs.SetInt(parent.name, 1);
                 PlayerPrefs.SetString("Player", parent.name);
                 PlayerPrefs.SetInt("Money", money - price);
-                UpdateButtons();
+                //UpdateButtons();
             }
             else
             {
@@ -56,23 +54,24 @@ public class BuyButton : MonoBehaviour, IPointerClickHandler, IPointerUpHandler
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Debug.Log("spriteName");
+
     }
 
     void Start ()
     {
         parent = transform.parent.gameObject;
 
-        UpdateButtons();
+        //UpdateButtons();
 	}
 	
 	void Update ()
     {
-		
-	}
+        UpdateButtons();
+
+    }
 
     void UpdateButtons()
-    {        
+    {
         if (parent.name == PlayerPrefs.GetString("Player"))
         {
             var sprite = Resources.Load("BuyButtons/Current", typeof(Sprite)) as Sprite;

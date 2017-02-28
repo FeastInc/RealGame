@@ -14,6 +14,7 @@ public class PlayerWalk : MonoBehaviour
     public bool isRun;
     private float directionValue = 10f;
 
+
     private PlayerState State
     {
         get { return (PlayerState)animator.GetInteger("State"); }

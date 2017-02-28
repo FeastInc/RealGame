@@ -15,29 +15,45 @@ public class Moves : MonoBehaviour
     [SerializeField] GameObject Laser;
     bool CanFire = false;
     Vector3[] Trajectory;
+    Vector3 playerPosition;
+    public bool isLoadPlayer;
+    bool isInstantiate;
 
     // Update is called once per frame
     void Update()
     {
-        Bullet.transform.position = Vector2.MoveTowards(Bullet.transform.position,
-            (Vector2)Bullet.transform.position + Vector2.right, Speed * Time.deltaTime);
-        if (Input.touchCount > 0)
+        if (isLoadPlayer)
         {
-            Aim();
-        }
-        else
-        {
-            RemoveAim();
-            if (CanFire) Fire();
+            GetPlayerPosition();
+            isLoadPlayer = false;
+            isInstantiate = true;
         }
 
+        if(isInstantiate)
+        {
+            if (Input.touchCount > 0)
+            {
+                Aim();
+            }
+            else
+            {
+                RemoveAim();
+                if (CanFire) Fire();
+            }
+        }        
+        
     }
     void Start()
     {
         LineRenderer lineRenderer = Laser.GetComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
         lineRenderer.startWidth = lineRenderer.endWidth = 0.1f;
-        lineRenderer.sortingOrder = 1;
+        lineRenderer.sortingOrder = 1;      
+    }
+
+    void GetPlayerPosition()
+    {
+        playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
     }
 
     Vector3[] GetTrajectory(Vector3 start, Vector3 direction)
