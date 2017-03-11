@@ -26,7 +26,8 @@ public class PlayerWalk : MonoBehaviour
         if (PlayerPrefs.GetInt("IsFirstRun") == 0)
         {
             PlayerPrefs.SetInt("IsFirstRun", 1);
-            PlayerPrefs.SetString("Player", "Player");
+            PlayerPrefs.SetString("Player", "Simple");
+            PlayerPrefs.SetInt("Simple", 1);
         }
 
         Player = Instantiate(Resources.Load("Prefabs/Players/" + PlayerPrefs.GetString("Player"))) as GameObject;
